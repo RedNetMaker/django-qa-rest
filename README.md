@@ -1,46 +1,98 @@
 # django-qa-rest
-Тестовое задание для собеседования
 
-## Docker Setup
+REST API для системы вопросов и ответов (Q&A), построенная на Django и Django REST Framework.
 
-This project is containerized with Docker Compose and uses PostgreSQL as the database.
+## Описание проекта
 
-### Prerequisites
+Проект представляет собой RESTful API для управления вопросами и ответами. Пользователи могут:
+- Создавать вопросы
+- Просматривать список вопросов и детальную информацию о каждом вопросе
+- Добавлять ответы на вопросы (требуется аутентификация)
+- Удалять свои ответы
+- Удалять вопросы (вместе со всеми ответами)
+
+### Технологии
+
+- **Django 5.2** - веб-фреймворк
+- **Django REST Framework** - для создания REST API
+- **PostgreSQL** - база данных
+- **drf-yasg** - документация API (Swagger/OpenAPI)
+- **Docker & Docker Compose** - контейнеризация
+
+## Быстрый старт
+
+### Требования
+
 - Docker
 - Docker Compose
 
-### Getting Started
+### Запуск проекта
 
-1. Copy the environment file:
+1. Клонируйте репозиторий и перейдите в директорию проекта:
    ```bash
-   cp .env.example .env
+   cd django-qa-rest
    ```
 
-2. Update the `.env` file with your settings (optional, defaults are provided).
-
-3. Build and start the containers:
+2. Запустите проект с помощью Docker Compose:
    ```bash
-   docker-compose up --build
+   docker-compose up
    ```
 
-4. Run migrations:
+   При первом запуске контейнеры будут автоматически собраны. После запуска контейнеров выполните миграции базы данных:
    ```bash
    docker-compose exec web python manage.py migrate
    ```
 
-5. Create a superuser (optional):
+3. (Опционально) Создайте суперпользователя для доступа к админ-панели:
    ```bash
    docker-compose exec web python manage.py createsuperuser
    ```
 
-6. Access the application:
-   - Django app: http://localhost:8000
-   - PostgreSQL: localhost:5432
+### Доступ к приложению
 
-### Useful Commands
+После запуска приложение будет доступно по следующим адресам:
 
-- Stop containers: `docker-compose down`
-- View logs: `docker-compose logs -f`
-- Run Django management commands: `docker-compose exec web python manage.py <command>`
-- Access Django shell: `docker-compose exec web python manage.py shell`
-- Access PostgreSQL: `docker-compose exec db psql -U django_user -d django_db`
+- **API**: http://localhost:8000
+- **Swagger UI** (интерактивная документация API): http://localhost:8000/swagger/
+- **ReDoc** (альтернативная документация): http://localhost:8000/redoc/
+- **Админ-панель Django**: http://localhost:8000/admin/
+- **PostgreSQL**: localhost:5432
+
+## API Endpoints
+
+### Вопросы (Questions)
+
+- `GET /questions/` - получить список всех вопросов
+- `POST /questions/` - создать новый вопрос
+- `GET /questions/<id>/` - получить вопрос со всеми ответами
+- `DELETE /questions/<id>/` - удалить вопрос (вместе с ответами)
+
+### Ответы (Answers)
+
+- `POST /questions/<id>/answers/` - добавить ответ на вопрос (требуется аутентификация)
+- `GET /answers/<id>/` - получить конкретный ответ
+- `DELETE /answers/<id>/` - удалить ответ (только владелец ответа)
+
+## Полезные команды
+
+- **Остановить контейнеры**: `docker-compose down`
+- **Просмотр логов**: `docker-compose logs -f`
+- **Выполнить миграции**: `docker-compose exec web python manage.py migrate`
+- **Создать суперпользователя**: `docker-compose exec web python manage.py createsuperuser`
+- **Django shell**: `docker-compose exec web python manage.py shell`
+- **Подключиться к PostgreSQL**: `docker-compose exec db psql -U django_user -d django_db`
+- **Остановить и удалить volumes**: `docker-compose down -v`
+
+## Настройка окружения
+
+Проект использует переменные окружения с значениями по умолчанию. При необходимости вы можете создать файл `.env` в корне проекта:
+
+```env
+DB_NAME=django_db
+DB_USER=django_user
+DB_PASSWORD=django_password
+DB_HOST=db
+DB_PORT=5432
+```
+
+Если файл `.env` не создан, будут использованы значения по умолчанию.
