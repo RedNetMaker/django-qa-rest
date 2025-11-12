@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Вход в систему</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        
+        .login-container {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            padding: 40px;
+            width: 100%;
+            max-width: 400px;
+        }
+        
+        h1 {
+            color: #333;
+            margin-bottom: 30px;
+            text-align: center;
+            font-size: 28px;
+            font-weight: 600;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #555;
+            font-weight: 500;
+            font-size: 14px;
+        }
+        
+        input[type="text"],
+        input[type="password"] {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 6px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+        
+        input[type="text"]:focus,
+        input[type="password"]:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        .btn {
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            margin-top: 10px;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+        
+        .btn:active {
+            transform: translateY(0);
+        }
+        
+        .errorlist {
+            list-style: none;
+            padding: 0;
+            margin-bottom: 15px;
+        }
+        
+        .errorlist li {
+            background: #fee;
+            color: #c33;
+            padding: 10px;
+            border-radius: 6px;
+            margin-bottom: 10px;
+            font-size: 14px;
+            border-left: 4px solid #c33;
+        }
+        
+        .helptext {
+            display: block;
+            margin-top: 5px;
+            font-size: 12px;
+            color: #888;
+        }
+        
+        .messages {
+            list-style: none;
+            padding: 0;
+            margin-bottom: 20px;
+        }
+        
+        .messages li {
+            padding: 12px;
+            border-radius: 6px;
+            margin-bottom: 10px;
+            font-size: 14px;
+        }
+        
+        .messages li.success {
+            background: #d4edda;
+            color: #155724;
+            border-left: 4px solid #28a745;
+        }
+        
+        .messages li.error {
+            background: #f8d7da;
+            color: #721c24;
+            border-left: 4px solid #dc3545;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <h1>Вход в систему</h1>
+        
+        {% if messages %}
+            <ul class="messages">
+                {% for message in messages %}
+                    <li class="{{ message.tags }}">{{ message }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+        
+        {% if form.errors %}
+            <ul class="errorlist">
+                {% for error in form.non_field_errors %}
+                    <li>{{ error }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+        
+        <form method="post" action="{% url 'login' %}">
+            {% csrf_token %}
+            
+            <div class="form-group">
+                <label for="{{ form.username.id_for_label }}">Имя пользователя:</label>
+                {{ form.username }}
+                {% if form.username.help_text %}
+                    <span class="helptext">{{ form.username.help_text }}</span>
+                {% endif %}
+                {% if form.username.errors %}
+                    <ul class="errorlist">
+                        {% for error in form.username.errors %}
+                            <li>{{ error }}</li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+            </div>
+            
+            <div class="form-group">
+                <label for="{{ form.password.id_for_label }}">Пароль:</label>
+                {{ form.password }}
+                {% if form.password.help_text %}
+                    <span class="helptext">{{ form.password.help_text }}</span>
+                {% endif %}
+                {% if form.password.errors %}
+                    <ul class="errorlist">
+                        {% for error in form.password.errors %}
+                            <li>{{ error }}</li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+            </div>
+            
+            <input type="hidden" name="next" value="{{ next }}" />
+            <button type="submit" class="btn">Войти</button>
+        </form>
+    </div>
+</body>
+</html>
+
