@@ -48,6 +48,9 @@ class QuestionAnswerCreateView(generics.CreateAPIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def get_queryset(self):
+        # Handle schema generation by drf-yasg
+        if getattr(self, 'swagger_fake_view', False):
+            return Answer.objects.none()
         return Answer.objects.filter(question_id=self.kwargs['pk'])
 
     def perform_create(self, serializer):
