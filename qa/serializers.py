@@ -6,11 +6,12 @@ from .models import Answer, Question
 class AnswerSerializer(serializers.ModelSerializer):
     user_id = serializers.PrimaryKeyRelatedField(source='user', read_only=True)
     username = serializers.CharField(source='user.username', read_only=True)
+    question_id = serializers.PrimaryKeyRelatedField(source='question', read_only=True)
 
     class Meta:
         model = Answer
-        fields = ['id', 'text', 'created_at', 'user_id', 'username']
-        read_only_fields = ['id', 'created_at', 'user_id', 'username']
+        fields = ['id', 'text', 'created_at', 'user_id', 'username', 'question_id']
+        read_only_fields = ['id', 'created_at', 'user_id', 'username', 'question_id']
 
 
 class QuestionSerializer(serializers.ModelSerializer):
