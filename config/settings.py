@@ -13,9 +13,13 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 from pathlib import Path
 from dotenv import load_dotenv
 import os
+import sys
 
 # Load environment variables from .env file
 load_dotenv()
+
+# Check if we're running tests
+TESTING = 'test' in sys.argv or 'pytest' in sys.modules or os.getenv('DJANGO_TEST') == 'True'
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -79,16 +83,26 @@ WSGI_APPLICATION = 'config.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.getenv('DB_NAME', 'django_db'),
-        'USER': os.getenv('DB_USER', 'django_user'),
-        'PASSWORD': os.getenv('DB_PASSWORD', 'django_password'),
-        'HOST': os.getenv('DB_HOST', 'localhost'),
-        'PORT': os.getenv('DB_PORT', '5432'),
+if TESTING:
+    # Use SQLite for tests to avoid requiring PostgreSQL connection
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': ':memory:',
+        }
     }
-}
+else:
+    # Use PostgreSQL for development/production
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql',
+            'NAME': os.getenv('DB_NAME', 'django_db'),
+            'USER': os.getenv('DB_USER', 'django_user'),
+            'PASSWORD': os.getenv('DB_PASSWORD', 'django_password'),
+            'HOST': os.getenv('DB_HOST', 'localhost'),
+            'PORT': os.getenv('DB_PORT', '5432'),
+        }
+    }
 
 
 # Password validation

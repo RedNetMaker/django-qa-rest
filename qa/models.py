@@ -12,7 +12,7 @@ class Question(models.Model):
     class Meta:
         verbose_name = "вопрос"
         verbose_name_plural = "вопросы"
-        ordering = ['-created_at']
+        ordering = ['-created_at', '-id']
 
     def __str__(self):
         return self.text[:50] + "..." if len(self.text) > 50 else self.text
